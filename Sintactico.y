@@ -30,6 +30,8 @@
     int ind_posEcnontrada;
     int ind_asigna;
     int ind_pos;
+    int ind_lista;
+    int ind_posicion;
     int ind_sent;
     int ind_start;
     int ind_programa;
