@@ -6,7 +6,7 @@
     #include "./lib/tabla_simbolos.h"
     #include "./lib/tercetos.h"
 
-	/* Funciones necesarias */
+		/* Funciones necesarias */
 	int yyerror(char* mensaje);
 	int yyerror();
 	int yylex();
@@ -37,6 +37,8 @@
     int ind_programa;
     int ind_listaVacia;
     int ind_cota_pivot;
+    int aux_ind;
+    int ind_finProg;
 
     /* Cosas para tercetos */
 	terceto lista_terceto[MAX_TERCETOS];
@@ -69,6 +71,7 @@
 start:
 	programa									        {
                                                             printf("\n--------------FIN PROGRAMA--------------\n");
+                                                            ind_finProg = crear_terceto(JMP,NOOP,NOOP);
                                                             ind_start = ind_programa;
                                                             int pos = agregarCteStringATabla("El valor debe ser >=1");
                                                             crear_terceto(WRITE,pos,NOOP);
@@ -77,7 +80,16 @@ start:
                                                                 int pos= agregarCteStringATabla("La lista está vacía");
                                                                 ind_escritura = crear_terceto(WRITE, pos, NOOP);
                                                                 modificarTerceto(ind_listaVacia,OP1,ultimo_terceto + OFFSET);
-                                                            } 
+                                                            }
+															pos = agregarCteStringATabla("La posicion no se encontro");
+															crear_terceto(WRITE,pos,NOOP);
+															if(!esListaVacia) modificarTerceto(aux_ind,OP1,ultimo_terceto+OFFSET);
+                                                            //Creo terceto fin 
+                                                            pos = agregarCteStringATabla("FIN PROGRAMA");
+                                                            crear_terceto(WRITE,pos,NOOP);
+                                                            //MODIFICAR
+                                                            modificarTerceto(ind_finProg,OP1,ultimo_terceto + OFFSET);
+                                                            
                                                             optimizarTercetos();
                                                             guardarTabla();
                                                             guardarTercetos();
@@ -106,10 +118,16 @@ sentencia:
 asignacion:
 	ID ASIGNA {strcpy(idAsignar, $1);} posicion	    {
 															printf("Regla 5: ID = posicion es ASIGNACION\n");
+															
                                                             if(!esListaVacia){
-                                                                int pos=buscarIDEnTabla(idAsignar);
-                                                                int posicion = agregarVarATabla("@pos", Int);
-															    ind_asigna = crear_terceto(ASIGNA, pos, posicion);
+																int cte = agregarCteIntATabla(0);
+																int pos = buscarIDEnTabla("@pos");
+                                                                int id = agregarVarATabla($1,Int);
+                                                                printf("EL RESULT ID ES:%d", id);
+
+																crear_terceto(CMP,pos,cte);
+																aux_ind = crear_terceto(BEQ,NOOP,NOOP);
+                                                                ind_asigna = crear_terceto(ASIGNA,id,pos);
                                                             }
                                                             
 														};
@@ -129,12 +147,18 @@ lista:
                                                             printf("Regla 9: lista COMA CTE es lista\n");
                                                             cantElementos++;
                                                             int cte = agregarCteIntATabla(yylval.int_val);
-                                                            /*
+                                                            int posicion = buscarIDEnTabla("@pos");
                                                             int pivote = buscarIDEnTabla(pivot);
                                                             crear_terceto(CMP,pivote, cte);
-                                                            modificarTerceto(ind_posEcnontrada,OP1,ultimo_terceto + OFFSET);
-                                                            crear_terceto(BEQ,NOOP, NOOP);
-                                                            */
+                                                            int incremento = ultimo_terceto+5;
+                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP); 
+															modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);
+                                                            int cteZero = agregarCteIntATabla(0);
+                                                            crear_terceto(CMP,posicion,cteZero);
+                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP);
+															cte = agregarCteIntATabla(cantElementos);
+                                                            ind_lista = crear_terceto(ASIGNA,posicion,cte);
+                                                            modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);	   
                                                         }             
     | CTE                                               {
                                                             printf("Regla 8: CTE es lista\n");
@@ -143,14 +167,19 @@ lista:
                                                             int posicion = agregarVarATabla("@pos", Int);
                                                             int cte = agregarCteIntATabla(yylval.int_val);
                                                             int pos = agregarCteIntATabla(0);
-                                                            /*
+                                                            
                                                             int pivote = buscarIDEnTabla(pivot);
 															crear_terceto(ASIGNA, posicion, pos); //Inicializo @pos en 0
                                                             crear_terceto(CMP, pivote, cte);
-                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP);
+															int incremento = ultimo_terceto+5;
+                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP); 
+															modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);
                                                             pos = agregarCteIntATabla(cantElementos);
+                                                            cte = agregarCteIntATabla(0);
+                                                            crear_terceto(CMP,posicion,cte);
+                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP);
                                                             ind_lista = crear_terceto(ASIGNA,posicion,pos);
-                                                            */
+                                                            modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);								
                                                         };
 lectura:
     READ ID												{
@@ -160,7 +189,7 @@ lectura:
                                                             int pos = buscarIDEnTabla($2);
 															ind_lectura = crear_terceto(READ, pos, NOOP);
                                                             crear_terceto(CMP,pos,cota);
-                                                            ind_cota_pivot=crear_terceto(BGE, NOOP, NOOP);
+                                                            ind_cota_pivot=crear_terceto(BLT, NOOP, NOOP);
 														};
 escritura:
     WRITE ID                                            {
@@ -173,6 +202,8 @@ escritura:
         													printf("Regla 10: WRITE CTE_S es escritura\n");
                                                             int pos= agregarCteStringATabla(yylval.string_val);
                                                             ind_escritura = crear_terceto(WRITE, pos, NOOP);
+															
+															
 														};
 %%
 
