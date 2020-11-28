@@ -20,12 +20,21 @@
 
     /* Cosas para las asignaciones */
 	char idAsignar[TAM_NOMBRE];
+    char pivot[TAM_NOMBRE];
+    int esListaVacia;
+    int cantElementos;
 
     /* Indices para no terminales */
 	int ind_escritura;
     int ind_lectura;
+    int ind_posEcnontrada;
     int ind_asigna;
     int ind_pos;
+    int ind_sent;
+    int ind_start;
+    int ind_programa;
+    int ind_listaVacia;
+    int ind_cota_pivot;
 
     /* Cosas para tercetos */
 	terceto lista_terceto[MAX_TERCETOS];
@@ -58,6 +67,15 @@
 start:
 	programa									        {
                                                             printf("\n--------------FIN PROGRAMA--------------\n");
+                                                            ind_start = ind_programa;
+                                                            int pos = agregarCteStringATabla("El valor debe ser >=1");
+                                                            crear_terceto(WRITE,pos,NOOP);
+                                                            modificarTerceto(ind_cota_pivot,OP1,ultimo_terceto + OFFSET);
+                                                            if(esListaVacia){
+                                                                int pos= agregarCteStringATabla("La lista está vacía");
+                                                                ind_escritura = crear_terceto(WRITE, pos, NOOP);
+                                                                modificarTerceto(ind_listaVacia,OP1,ultimo_terceto + OFFSET);
+                                                            } 
                                                             optimizarTercetos();
                                                             guardarTabla();
                                                             guardarTercetos();
@@ -66,48 +84,81 @@ start:
 /* Seccion de codigo */
 programa:                                                 /* No existen bloques sin sentencias */
 	programa sentencia	                                {}
-	| sentencia			                                {};
+	| sentencia			                                {ind_programa = ind_sent;};
 
 sentencia:
 	asignacion			                                {
 															printf("--------------FIN ASIGNACION--------------\n");
+                                                            ind_sent = ind_asigna;
 														}
 	| lectura                                           {
 															printf("--------------FIN LECTURA--------------\n");
+                                                            ind_sent = ind_lectura;
 														}
 	| escritura                                         {
 															printf("--------------FIN ESCRITURA--------------\n");
+                                                            ind_sent = ind_escritura;
 														};
 /* Otras cosas */
 
 asignacion:
-	ID ASIGNA {{strcpy(idAsignar, $1);}} posicion	    {
+	ID ASIGNA {strcpy(idAsignar, $1);} posicion	    {
 															printf("Regla 5: ID = posicion es ASIGNACION\n");
-                                                            //int pos=buscarIDEnTabla(idAsignar);
-															//ind_asigna = crear_terceto(ASIGNA, pos, ind_pos)
+                                                            if(!esListaVacia){
+                                                                int pos=buscarIDEnTabla(idAsignar);
+                                                                int posicion = agregarVarATabla("@pos", Int);
+															    ind_asigna = crear_terceto(ASIGNA, pos, posicion);
+                                                            }
+                                                            
 														};
 posicion:
-    POSICION PARA ID PYC CA lista CC PARC               {
-                                                            printf("Regla 6: POSICION PARA ID PYC CA lista CC PARC es posicion\n");
-                                                        }
+    POSICION PARA ID PYC CA {strcpy(pivot, $3);} lista CC PARC      {
+                                                                        printf("Regla 6: POSICION PARA ID PYC CA lista CC PARC es posicion\n");
+                                                                        esListaVacia = 0;
+                                                                        ind_posicion = ind_lista;
+                                                                    }
     | POSICION PARA ID PYC CA CC PARC                   {
                                                             printf("Regla 7: POSICION PARA ID PYC CA CC PARC es posicion\n");
+                                                            esListaVacia = 1;
+                                                            ind_listaVacia = crear_terceto(JMP, NOOP, NOOP);
                                                         };
 lista:
     lista COMA CTE                                      {
                                                             printf("Regla 9: lista COMA CTE es lista\n");
-                                                            agregarCteIntATabla(yylval.int_val);
+                                                            cantElementos++;
+                                                            int cte = agregarCteIntATabla(yylval.int_val);
+                                                            /*
+                                                            int pivote = buscarIDEnTabla(pivot);
+                                                            crear_terceto(CMP,pivote, cte);
+                                                            modificarTerceto(ind_posEcnontrada,OP1,ultimo_terceto + OFFSET);
+                                                            crear_terceto(BEQ,NOOP, NOOP);
+                                                            */
                                                         }             
     | CTE                                               {
                                                             printf("Regla 8: CTE es lista\n");
-                                                            agregarCteIntATabla(yylval.int_val);
+                                                            // Creo una variable @pos (o la reutilizo)
+                                                            cantElementos = 1;
+                                                            int posicion = agregarVarATabla("@pos", Int);
+                                                            int cte = agregarCteIntATabla(yylval.int_val);
+                                                            int pos = agregarCteIntATabla(0);
+                                                            /*
+                                                            int pivote = buscarIDEnTabla(pivot);
+															crear_terceto(ASIGNA, posicion, pos); //Inicializo @pos en 0
+                                                            crear_terceto(CMP, pivote, cte);
+                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP);
+                                                            pos = agregarCteIntATabla(cantElementos);
+                                                            ind_lista = crear_terceto(ASIGNA,posicion,pos);
+                                                            */
                                                         };
 lectura:
     READ ID												{
         													printf("Regla 4: READ ID es lectura\n");
                                                             agregarVarATabla(yylval.string_val,Int);
+                                                            int cota = agregarCteIntATabla(1);
                                                             int pos = buscarIDEnTabla($2);
 															ind_lectura = crear_terceto(READ, pos, NOOP);
+                                                            crear_terceto(CMP,pos,cota);
+                                                            ind_cota_pivot=crear_terceto(BGE, NOOP, NOOP);
 														};
 escritura:
     WRITE ID                                            {
