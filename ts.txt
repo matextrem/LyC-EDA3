@@ -1,7 +1,7 @@
-String0	CTE_STRING	"Ingrese un valor pivot mayor o igual a 1: "	43
+String0	CTE_STRING	Ingrese un valor pivot mayor o igual a 1: 	41
 pivot	INT
 _1	CTE_INT	1
-String1	CTE_STRING	"Elemento encontrado en posición: "	35
+String1	CTE_STRING	Elemento encontrado en posición: 	33
 resul	INT
 String2	CTE_STRING	El valor debe ser >=1	20
 String3	CTE_STRING	La lista está vacía	20

@@ -74,8 +74,8 @@ void guardarTercetos(){
 			case POSICION:
 				fprintf(arch, "posicion");
 				break;
-			case POSICION_TRUE:
-				fprintf(arch, "posicion_true");
+			case ETIQUETA:
+				fprintf(arch, "etiqueta");
 				break;
 			case POSICION_CMP:
 				fprintf(arch, "posicion_cmp");

@@ -5,8 +5,9 @@
 	#include "y.tab.h"
     #include "./lib/tabla_simbolos.h"
     #include "./lib/tercetos.h"
+    #include "./lib/assembler.h"
 
-		/* Funciones necesarias */
+	/* Funciones necesarias */
 	int yyerror(char* mensaje);
 	int yyerror();
 	int yylex();
@@ -75,30 +76,37 @@ start:
                                                             ind_finProg = crear_terceto(JMP,NOOP,NOOP);
                                                             ind_start = ind_programa;
                                                             int pos = agregarCteStringATabla("El valor debe ser >=1");
-                                                            crear_terceto(WRITE,pos,NOOP);
+                                                            crear_terceto(ETIQUETA,NOOP,NOOP);
                                                             modificarTerceto(ind_cota_pivot,OP1,ultimo_terceto + OFFSET);
+                                                            crear_terceto(WRITE,pos,NOOP);
                                                             if(esListaVacia){
-                                                                int pos= agregarCteStringATabla("La lista está vacía");
-                                                                ind_escritura = crear_terceto(WRITE, pos, NOOP);
+                                                                int pos= agregarCteStringATabla("La lista esta vacia");
+                                                                crear_terceto(ETIQUETA,NOOP,NOOP);
                                                                 modificarTerceto(ind_listaVacia,OP1,ultimo_terceto + OFFSET);
+                                                                ind_escritura = crear_terceto(WRITE, pos, NOOP);
                                                                 ind_salto = crear_terceto(JMP, NOOP,NOOP);
                                                             }else{
                                                                 ind_salto = crear_terceto(JMP, NOOP,NOOP);
-                                                                pos = agregarCteStringATabla("La posicion no se encontro.");
+                                                                pos = agregarCteStringATabla("La posicion no se encontro");
+                                                                crear_terceto(ETIQUETA,NOOP,NOOP);
+                                                                modificarTerceto(aux_ind,OP1,ultimo_terceto+OFFSET);
 															    crear_terceto(WRITE,pos,NOOP);
                                                             }
-															if(!esListaVacia) modificarTerceto(aux_ind,OP1,ultimo_terceto+OFFSET);
+
                                                             //Creo terceto fin 
                                                             pos = agregarCteStringATabla("FIN PROGRAMA");
-                                                            crear_terceto(WRITE,pos,NOOP);
+                                                            crear_terceto(ETIQUETA,NOOP,NOOP);
 
                                                             //MODIFICAR
                                                             modificarTerceto(ind_finProg,OP1,ultimo_terceto + OFFSET);
                                                             modificarTerceto(ind_salto,OP1,ultimo_terceto + OFFSET);
+
+                                                            crear_terceto(WRITE,pos,NOOP);
                                                             
                                                             optimizarTercetos();
                                                             guardarTabla();
                                                             guardarTercetos();
+                                                            generarAssembler();
 														};
                                                        
 /* Seccion de codigo */
@@ -129,6 +137,7 @@ asignacion:
 																int cte = agregarCteIntATabla(0);
 																int pos = buscarIDEnTabla("@pos");
                                                                 int id = agregarVarATabla($1,Int);
+                                                                crear_terceto(ETIQUETA,NOOP, NOOP);
 																crear_terceto(CMP,pos,cte);
 																aux_ind = crear_terceto(BEQ,NOOP,NOOP);
                                                                 ind_asigna = crear_terceto(ASIGNA,id,pos);
@@ -153,10 +162,11 @@ lista:
                                                             int cte = agregarCteIntATabla(yylval.int_val);
                                                             int posicion = buscarIDEnTabla("@pos");
                                                             int pivote = buscarIDEnTabla(pivot);
+                                                            crear_terceto(ETIQUETA,NOOP, NOOP);
                                                             crear_terceto(CMP,pivote, cte);
                                                             int incremento = ultimo_terceto+5;
-                                                            ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP); 
-															modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);
+                                                            ind_posEcnontrada = crear_terceto(BNE,incremento+OFFSET, NOOP); 
+															//modificarTerceto(ind_posEcnontrada,OP1,incremento+OFFSET);
                                                             int cteZero = agregarCteIntATabla(0);
                                                             crear_terceto(CMP,posicion,cteZero);
                                                             ind_posEcnontrada = crear_terceto(BNE,NOOP, NOOP);
@@ -204,7 +214,11 @@ escritura:
 														}
     | WRITE CTE_S                                       {
         													printf("Regla 10: WRITE CTE_S es escritura\n");
-                                                            int pos= agregarCteStringATabla(yylval.string_val);
+                                                            int longCad = strlen($2)-2;
+                                                            char cad[longCad];
+                                                            strncpy(cad, $2 + 1, longCad);
+                                                            cad[longCad] = '\0';
+                                                            int pos= agregarCteStringATabla(cad);
                                                             ind_escritura = crear_terceto(WRITE, pos, NOOP);
 															
 															
