@@ -39,6 +39,7 @@
     int ind_cota_pivot;
     int aux_ind;
     int ind_finProg;
+    int ind_salto;
 
     /* Cosas para tercetos */
 	terceto lista_terceto[MAX_TERCETOS];
@@ -80,15 +81,20 @@ start:
                                                                 int pos= agregarCteStringATabla("La lista está vacía");
                                                                 ind_escritura = crear_terceto(WRITE, pos, NOOP);
                                                                 modificarTerceto(ind_listaVacia,OP1,ultimo_terceto + OFFSET);
+                                                                ind_salto = crear_terceto(JMP, NOOP,NOOP);
+                                                            }else{
+                                                                ind_salto = crear_terceto(JMP, NOOP,NOOP);
+                                                                pos = agregarCteStringATabla("La posicion no se encontro.");
+															    crear_terceto(WRITE,pos,NOOP);
                                                             }
-															pos = agregarCteStringATabla("La posicion no se encontro");
-															crear_terceto(WRITE,pos,NOOP);
 															if(!esListaVacia) modificarTerceto(aux_ind,OP1,ultimo_terceto+OFFSET);
                                                             //Creo terceto fin 
                                                             pos = agregarCteStringATabla("FIN PROGRAMA");
                                                             crear_terceto(WRITE,pos,NOOP);
+
                                                             //MODIFICAR
                                                             modificarTerceto(ind_finProg,OP1,ultimo_terceto + OFFSET);
+                                                            modificarTerceto(ind_salto,OP1,ultimo_terceto + OFFSET);
                                                             
                                                             optimizarTercetos();
                                                             guardarTabla();
@@ -123,8 +129,6 @@ asignacion:
 																int cte = agregarCteIntATabla(0);
 																int pos = buscarIDEnTabla("@pos");
                                                                 int id = agregarVarATabla($1,Int);
-                                                                printf("EL RESULT ID ES:%d", id);
-
 																crear_terceto(CMP,pos,cte);
 																aux_ind = crear_terceto(BEQ,NOOP,NOOP);
                                                                 ind_asigna = crear_terceto(ASIGNA,id,pos);
