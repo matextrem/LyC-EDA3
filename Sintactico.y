@@ -95,7 +95,7 @@ start:
                                                             pos = agregarCteStringATabla("FIN PROGRAMA");
                                                             crear_terceto(ETIQUETA,NOOP,NOOP);
 
-                                                            //MODIFICAR
+                                                            //MODIFICAR TERCETOS
                                                             modificarTerceto(ind_finProg,OP1,ultimo_terceto + OFFSET);
                                                             modificarTerceto(ind_salto,OP1,ultimo_terceto + OFFSET);
 
@@ -163,7 +163,7 @@ lista:
                                                             crear_terceto(ETIQUETA,NOOP, NOOP);
                                                             crear_terceto(CMP,pivote, cte);
                                                             int incremento = ultimo_terceto+SALTO_POSICION;
-                                                            ind_posEncontrada = crear_terceto(BNE,incremento+OFFSET, NOOP); 
+                                                            crear_terceto(BNE,incremento+OFFSET, NOOP); 
                                                             crear_terceto(CMP,posicion,agregarCteIntATabla(0));
                                                             ind_posEncontrada = crear_terceto(BNE,NOOP, NOOP);
 															cte = agregarCteIntATabla(cantElementos);
@@ -182,7 +182,7 @@ lista:
 															crear_terceto(ASIGNA, posicion, pos); //Inicializo @pos en 0
                                                             crear_terceto(CMP, pivote, cte);
 															int incremento = ultimo_terceto+SALTO_POSICION;
-                                                            ind_posEncontrada = crear_terceto(BNE,incremento+OFFSET, NOOP); 
+                                                            crear_terceto(BNE,incremento+OFFSET, NOOP); 
                                                             pos = agregarCteIntATabla(cantElementos);
                                                             cte = agregarCteIntATabla(0);
                                                             crear_terceto(CMP,posicion,cte);
