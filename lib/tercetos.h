@@ -17,8 +17,7 @@
 #define BEQ 14  /* != */
 #define BGT 8   /* <= */
 #define JMP 16  /* Branch Always o Salto Incondicional*/
-#define POSICION_TRUE 20 /* Etiqueta de asignacion por true para inlist */
-#define POSICION_CMP 22 /* Etiqueta de comparacion para inlist */
+#define SALTO_POSICION 5 /* Etiqueta de tamaño de salto posicion */
 #define ETIQUETA 100
 
 

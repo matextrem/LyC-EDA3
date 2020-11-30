@@ -24,7 +24,7 @@ int crear_terceto(int operador, int op1, int op2){
 y la posicion debe ser OP1, OP2 u OPERADOR. Si el terceto no existe, aborta la compilacion. */
 void modificarTerceto(int indice, int posicion, int valor){
 	if(indice > ultimo_terceto + OFFSET){
-		printf("Ups, algo fallo. Intente modificar un terceto que no existe. Mala mia.");
+		printf("Hubo un error al modificar un terceto.");
 		system ("Pause");
 		exit (4);
 	}
@@ -44,7 +44,7 @@ void modificarTerceto(int indice, int posicion, int valor){
 /* Guarda los tercetos generados en un archivo */
 void guardarTercetos(){
 	if(ultimo_terceto == -1)
-		yyerror("No encontre los tercetos");
+		yyerror("Tercetos no encontrados");
 
 	FILE* arch = fopen("intermedia.txt", "w+");
 	if(!arch){
@@ -65,20 +65,11 @@ void guardarTercetos(){
 			case NOOP:
 				fprintf(arch, "---");
 				break;
-			case PROG:
-				fprintf(arch, "sentencia");
-				break;
 			case ASIGNA:
 				fprintf(arch, "=");
 				break;
-			case POSICION:
-				fprintf(arch, "posicion");
-				break;
 			case ETIQUETA:
 				fprintf(arch, "etiqueta");
-				break;
-			case POSICION_CMP:
-				fprintf(arch, "posicion_cmp");
 				break;
 			case READ:
 				fprintf(arch, "READ");
@@ -111,7 +102,7 @@ void guardarTercetos(){
 				fprintf(arch, "JMP");
 				break;
 			default:
-				fprintf(arch, "algo esta mal");
+				fprintf(arch, "No encontre el operador");
 				break;
 			}
 

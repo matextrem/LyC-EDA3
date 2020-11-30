@@ -23,7 +23,6 @@ void generarAssembler(){
       case CMP:
 		comparacion(arch, i);
         break;
-
       case BGT:
         escribirSalto(arch, "JA", lista_terceto[i].op1);
         break;
@@ -105,7 +104,7 @@ void escribirSalto(FILE* arch, char* salto, int tercetoDestino){
 
     //Por si nos olvidamos de rellenar un salto
     if(tercetoDestino == NOOP){
-        printf("Ups. Parece que me olvide de rellenar un salto en los tercetos y ahora no se como seguir.\n");
+        printf("Error al intentar rellenar saltos.\n");
         system("Pause");
         exit(10);
     }

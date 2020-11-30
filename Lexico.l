@@ -50,8 +50,13 @@ ESPACIO     " "
                             }
 						
 {CTE_S}				        {
-                                    yylval.string_val = strdup(yytext);
-                                    return CTE_S;
+                                // Remuevo las comillas del string
+                                int longCad = strlen(yytext)-2;
+                                char cad[longCad];
+                                strncpy(cad, yytext + 1, longCad);
+                                cad[longCad] = '\0';
+                                yylval.string_val = strdup(cad);   
+                                return CTE_S;
                             }
 								
 {ESPACIO}
