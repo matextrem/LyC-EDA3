@@ -85,7 +85,7 @@ start:
                                                                 ind_salto = crear_terceto(JMP, NOOP,NOOP);
                                                             }else{
                                                                 ind_salto = crear_terceto(JMP, NOOP,NOOP);
-                                                                pos = agregarCteStringATabla("La posicion no se encontro");
+                                                                pos = agregarCteStringATabla("Elemento no encontrado");
                                                                 crear_terceto(ETIQUETA,NOOP,NOOP);
                                                                 modificarTerceto(aux_ind,OP1,ultimo_terceto+OFFSET);
 															    crear_terceto(WRITE,pos,NOOP);

@@ -14,10 +14,11 @@ _1 dd 1
 @pos dd ?
 _0 dd 0
 _2 dd 2
+_3 dd 3
 resul dd ?
-String1 db "Elemento encontrado en posición: ", '$'
+String1 db "Elemento encontrado en posicion: ", '$'
 String2 db "El valor debe ser >=1", '$'
-String3 db "La posicion no se encontro", '$'
+String3 db "Elemento no encontrado", '$'
 String4 db "FIN PROGRAMA", '$'
 
 .CODE
@@ -37,7 +38,7 @@ FXCH
 FCOMP
 FSTSW AX
 SAHF
-JB etiqueta279
+JB etiqueta285
 FILD _0
 FISTP @pos
 FILD pivot
@@ -74,13 +75,30 @@ JNE etiqueta272
 FILD _2
 FISTP @pos
 etiqueta272:
+FILD pivot
+FILD _3
+FXCH
+FCOMP
+FSTSW AX
+SAHF
+JNE etiqueta278
 FILD @pos
 FILD _0
 FXCH
 FCOMP
 FSTSW AX
 SAHF
-JE etiqueta282
+JNE etiqueta278
+FILD _3
+FISTP @pos
+etiqueta278:
+FILD @pos
+FILD _0
+FXCH
+FCOMP
+FSTSW AX
+SAHF
+JE etiqueta288
 FILD @pos
 FISTP resul
 displayString String1
@@ -89,17 +107,17 @@ displayString NEW_LINE
 DisplayInteger resul
 displayString NEW_LINE
 
-JMP etiqueta284
-etiqueta279:
+JMP etiqueta290
+etiqueta285:
 displayString String2
 displayString NEW_LINE
 
-JMP etiqueta284
-etiqueta282:
+JMP etiqueta290
+etiqueta288:
 displayString String3
 displayString NEW_LINE
 
-etiqueta284:
+etiqueta290:
 displayString String4
 displayString NEW_LINE
 
