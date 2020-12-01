@@ -19,7 +19,6 @@ resul dd ?
 String1 db "Elemento encontrado en posicion: ", '$'
 String2 db "El valor debe ser >=1", '$'
 String3 db "Elemento no encontrado", '$'
-String4 db "FIN PROGRAMA", '$'
 
 .CODE
 START:
@@ -118,9 +117,6 @@ displayString String3
 displayString NEW_LINE
 
 etiqueta290:
-displayString String4
-displayString NEW_LINE
-
 
 MOV AH, 1
 INT 21h

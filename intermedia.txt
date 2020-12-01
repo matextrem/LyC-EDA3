@@ -33,4 +33,3 @@
 [288] (etiqueta, ---, ---)
 [289] (WRITE, String3, ---)
 [290] (etiqueta, ---, ---)
-[291] (WRITE, String4, ---)

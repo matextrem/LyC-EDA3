@@ -91,15 +91,12 @@ start:
 															    crear_terceto(WRITE,pos,NOOP);
                                                             }
 
-                                                            //Creo terceto fin 
-                                                            pos = agregarCteStringATabla("FIN PROGRAMA");
+                                                            //Creo terceto con etiqueta de fin 
                                                             crear_terceto(ETIQUETA,NOOP,NOOP);
 
                                                             //MODIFICAR TERCETOS
                                                             modificarTerceto(ind_finProg,OP1,ultimo_terceto + OFFSET);
                                                             modificarTerceto(ind_salto,OP1,ultimo_terceto + OFFSET);
-
-                                                            crear_terceto(WRITE,pos,NOOP);
                                                             
                                                             optimizarTercetos();
                                                             guardarTabla();
