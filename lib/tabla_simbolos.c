@@ -119,8 +119,8 @@ void guardarTabla(){
 		printf("No se pudo crear el archivo ts.txt\n");
 		return;
 	}
-
-	for(int i = 0; i <= fin_tabla; i++){
+	int i;
+	for(i = 0; i <= fin_tabla; i++){
 		fprintf(arch, "%s\t", (tabla_simbolo[i].nombre) );
 
 		switch (tabla_simbolo[i].tipo_dato){

@@ -46,8 +46,8 @@ void guardarTercetos(){
 		printf("No pude crear el archivo intermedia.txt\n");
 		return;
 	}
-
-	for(int i = 0; i <= ultimo_terceto; i++){
+	int i;
+	for(i = 0; i <= ultimo_terceto; i++){
 		
 		if(lista_terceto[i].operador != NOOP){
 			fprintf(arch, "[%d] (", i + OFFSET);
@@ -125,7 +125,8 @@ void guardarTercetos(){
 }
 
 void optimizarTercetos(){
-	for(int i=0; i<MAX_TERCETOS; i++){
+	int i;
+	for(i=0; i<MAX_TERCETOS; i++){
 		if(lista_terceto[i].op1 >= OFFSET){
 			int ref = lista_terceto[i].op1 - OFFSET;
 			if(lista_terceto[ref].operador == NOOP)

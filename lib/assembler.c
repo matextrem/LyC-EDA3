@@ -14,8 +14,8 @@ void generarAssembler(){
   escribirInicio(arch);
   generarTabla(arch);
   escribirInicioCodigo(arch);
-
-  for(int i=0; i <= ultimo_terceto; i++){
+  int i;
+  for(i=0; i <= ultimo_terceto; i++){
     switch(lista_terceto[i].operador){
       case ASIGNA:
 	  	asignacion(arch, i);
@@ -76,8 +76,8 @@ void generarTabla(FILE *arch){
     fprintf(arch, ".DATA\n");
     fprintf(arch, "NEW_LINE DB 0AH,0DH,'$'\n");
 	fprintf(arch, "CWprevio DW ?\n");
-
-    for(int i=0; i<=fin_tabla; i++){
+    int i;
+    for(i=0; i<=fin_tabla; i++){
         fprintf(arch, "%s ", tabla_simbolo[i].nombre);
         switch(tabla_simbolo[i].tipo_dato){
         case CteInt:
