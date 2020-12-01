@@ -3,13 +3,10 @@
 #include "tercetos.h"
 #include "../y.tab.h"
 
-/** Agrega un terceto a la lista de tercetos. Si se quiere guardar solo una constante o variable, mandar NOOP en
-el campo de operador y op2. Para los operadores pasar el token literal, para los operandos pasar la posicion en
-tabla de simbolos o el indice de otro terceto. */
 int crear_terceto(int operador, int op1, int op2){
 	ultimo_terceto++;
 	if(ultimo_terceto >= MAX_TERCETOS){
-		printf("Error: me quede sin espacio en para los tercetos. Optimiza tu codigo.\n");
+		printf("Error: No hay espacio para crear tercetos.\n");
 		system("Pause");
 		exit(3);
 	}
@@ -20,8 +17,7 @@ int crear_terceto(int operador, int op1, int op2){
 	return ultimo_terceto + OFFSET;
 }
 
-/** Modifica el terceto con el indice indicado en la posicion indicada. El indice debe ser sin el OFFSET
-y la posicion debe ser OP1, OP2 u OPERADOR. Si el terceto no existe, aborta la compilacion. */
+
 void modificarTerceto(int indice, int posicion, int valor){
 	if(indice > ultimo_terceto + OFFSET){
 		printf("Hubo un error al modificar un terceto.");
@@ -41,7 +37,6 @@ void modificarTerceto(int indice, int posicion, int valor){
 	}
 }
 
-/* Guarda los tercetos generados en un archivo */
 void guardarTercetos(){
 	if(ultimo_terceto == -1)
 		yyerror("Tercetos no encontrados");
@@ -53,14 +48,10 @@ void guardarTercetos(){
 	}
 
 	for(int i = 0; i <= ultimo_terceto; i++){
-		//La forma es [i] (operador, op1, op2)
-
-		//Si el operador es NOOP, es solo una ID o CTE que ya optimizamos, lo ignoro
+		
 		if(lista_terceto[i].operador != NOOP){
-			//Escribo indice
 			fprintf(arch, "[%d] (", i + OFFSET);
 
-			//escribo operador
 			switch(lista_terceto[i].operador){
 			case NOOP:
 				fprintf(arch, "---");
@@ -102,33 +93,29 @@ void guardarTercetos(){
 				fprintf(arch, "JMP");
 				break;
 			default:
-				fprintf(arch, "No encontre el operador");
+				fprintf(arch, "No se encontro el operador");
 				break;
 			}
 
 			fprintf(arch, ", ");
-			//Escribo op1
 			int op = lista_terceto[i].op1;
 
 			if(op == NOOP)
 				fprintf(arch, "---");
 			else if(op < TAMANIO_TABLA){
-				//Es una entrada a tabla de simbolos
 				fprintf(arch, "%s", (tabla_simbolo[op].nombre) );
 			}
-			else //Es el indice de otro terceto
+			else
 				fprintf(arch, "[%d]", op);
 
 			fprintf(arch, ", ");
-			//Escribo op2
 			op = lista_terceto[i].op2;
 			if(op == NOOP)
 				fprintf(arch, "---");
 			else if(op < TAMANIO_TABLA){
-				//Es una entrada a tabla de simbolos
 				fprintf(arch, "%s", (tabla_simbolo[op].nombre) );
 			}
-			else //Es el indice de otro terceto
+			else
 				fprintf(arch, "[%d]", op);
 
 			fprintf(arch, ")\n");
@@ -137,30 +124,17 @@ void guardarTercetos(){
 	fclose(arch);
 }
 
-/**
-* Hay tercetos que solo tienen una CTE o ID. En esos casos subimos la CTE o ID
-* a los tercetos que las usan.
-*/
 void optimizarTercetos(){
-	//Recorro todos los tercetos
 	for(int i=0; i<MAX_TERCETOS; i++){
-		//Por cada terceto...
-
-		//Si el operando 1 es otro terceto...
 		if(lista_terceto[i].op1 >= OFFSET){
-			//Busco el terceto referenciado
 			int ref = lista_terceto[i].op1 - OFFSET;
-			if(lista_terceto[ref].operador == NOOP) //Si el referenciado solo tiene una ID o CTE
-				// Reemplazo la referencia al terceto por una referencia a la ID o CTE directamente
+			if(lista_terceto[ref].operador == NOOP)
 				lista_terceto[i].op1 = lista_terceto[ref].op1;
 		}
 
-		//Si el operando 2 es otro terceto...
 		if(lista_terceto[i].op2 >= OFFSET){
-			//Busco el terceto referenciado
 			int ref = lista_terceto[i].op2 - OFFSET;
-			if(lista_terceto[ref].operador == NOOP) //Si el referenciado solo tiene una ID o CTE
-				// Reemplazo la referencia al terceto por una referencia a la ID o CTE directamente
+			if(lista_terceto[ref].operador == NOOP)
 				lista_terceto[i].op2 = lista_terceto[ref].op1;
 		}
 	}

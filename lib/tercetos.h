@@ -6,22 +6,20 @@
 #define OFFSET TAMANIO_TABLA
 #define MAX_TERCETOS 512
 
-/* Operadores extra para usar con los tokens */
 #define NOOP -1 /* Sin operador */
-#define PROG 7  /* Operador que indica el orden de las sentencias */
-#define CMP 21  /* Comparador de assembler */
-#define BNE 2   /* = */
-#define BGE 4   /* < */
-#define BLT 6   /* >= */
-#define BLE 10  /* > */
-#define BEQ 14  /* != */
-#define BGT 8   /* <= */
-#define JMP 16  /* Branch Always o Salto Incondicional*/
+#define PROG 7  
+#define CMP 21  
+#define BNE 2   
+#define BGE 4   
+#define BLT 6   
+#define BLE 10  
+#define BEQ 14  
+#define BGT 8   
+#define JMP 16  
 #define SALTO_POSICION 5 /* Etiqueta de tamaño de salto posicion */
 #define ETIQUETA 100
 
 
-/* Posiciones dentro de un terceto */
 #define OP1 2
 #define OP2 3
 #define OPERADOR 1
@@ -40,6 +38,6 @@ typedef struct{
 
 /* Variables externas */
 extern terceto lista_terceto[MAX_TERCETOS];
-extern int ultimo_terceto; /* Apunta al ultimo terceto escrito. Incrementarlo para guardar el siguiente. */
+extern int ultimo_terceto; /* Apunta al ultimo terceto escrito. */
 
 #endif

@@ -2,7 +2,6 @@
 #ifndef tabla_simbolos_h
 #define tabla_simbolos_h
 
-/* Tipos de datos para la tabla de simbolos */
 #define Int 1
 #define CteInt 4
 #define CteString 6

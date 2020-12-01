@@ -15,11 +15,11 @@
     int yystopparser=0;
     FILE  *yyin;
 
-    /* Cosas de tabla de simbolos */
+    /* Tabla de simbolos */
 	simbolo tabla_simbolo[TAMANIO_TABLA];
     int fin_tabla = -1;
 
-    /* Cosas para las asignaciones */
+    /* Variables para asignaciones */
     char pivot[TAM_NOMBRE];
     int esListaVacia;
     int cantElementos;
@@ -40,9 +40,9 @@
     int ind_finProg;
     int ind_salto;
 
-    /* Cosas para tercetos */
+    /* Variables para tercetos */
 	terceto lista_terceto[MAX_TERCETOS];
-	int ultimo_terceto = -1; /* Apunta al ultimo terceto escrito. Incrementarlo para guardar el siguiente. */
+	int ultimo_terceto = -1;
 
 %}
 
@@ -108,7 +108,7 @@ start:
 														};
                                                        
 /* Seccion de codigo */
-programa:                                                 /* No existen bloques sin sentencias */
+programa:                                                 
 	programa sentencia	                                {ind_programa = ind_sent;}
 	| sentencia			                                {ind_programa = ind_sent;};
 
@@ -172,7 +172,6 @@ lista:
                                                         }             
     | CTE                                               {
                                                             printf("Regla 8: CTE es lista\n");
-                                                            // Creo una variable @pos (o la reutilizo)
                                                             cantElementos = 1;
                                                             int posicion = agregarVarATabla("@pos", Int);
                                                             int cte = agregarCteIntATabla(yylval.int_val);
